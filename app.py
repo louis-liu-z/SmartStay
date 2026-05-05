@@ -46,7 +46,7 @@ def load_recommender():
 
 rec = load_recommender()
 
-for _key in ("results", "user_vec", "listing_id", "city", "budget", "room_type", "amenities_str", "eval_df"):
+for _key in ("results", "user_vec", "listing_id", "city", "budget", "room_type", "amenities_str", "eval_df", "explanations"):
     if _key not in st.session_state:
         st.session_state[_key] = None
 
@@ -99,6 +99,7 @@ if inputs["find_btn"]:
         budget=inputs["budget"],
         room_type=inputs["room_type"],
         amenities_str=amenities_str,
+        explanations=None,
     )
 
 tab_rec, tab_eda, tab_compare = st.tabs(["Recommendations", "Explore Data", "Compare Models"])

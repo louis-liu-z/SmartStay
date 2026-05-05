@@ -1,11 +1,15 @@
+import json
 import pandas as pd
 
 
-def gemini_explain(listings_df: pd.DataFrame, user_prefs: dict, api_key: str) -> str:
+def gemini_explain(listings_df: pd.DataFrame, user_prefs: dict, api_key: str) -> list[str]:
+    n = len(listings_df)
+    fallback = lambda msg: [msg] * n
+
     try:
         import google.generativeai as genai
     except ImportError:
-        return "google-generativeai is not installed. Run: pip install google-generativeai"
+        return fallback("google-generativeai is not installed. Run: pip install google-generativeai")
 
     genai.configure(api_key=api_key)
     try:
@@ -16,10 +20,10 @@ def gemini_explain(listings_df: pd.DataFrame, user_prefs: dict, api_key: str) ->
             None,
         )
     except Exception as e:
-        return f"Could not connect to Gemini: {e}"
+        return fallback(f"Could not connect to Gemini: {e}")
 
     if model is None:
-        return "No Gemini model found that supports generateContent."
+        return fallback("No Gemini model found that supports generateContent.")
 
     details = []
     for i, (_, row) in enumerate(listings_df.iterrows()):
@@ -41,14 +45,23 @@ A user is looking for an Airbnb in California with these preferences:
 - Room type: {user_prefs.get('room_type')}
 - Must-have amenities: {user_prefs.get('amenities')}
 
-Here are {len(listings_df)} recommended listings:
+Here are {n} recommended listings:
 {chr(10).join(details)}
 
-For each listing, write a concise 2-3 sentence explanation of why it matches the user's needs.
-Be specific — mention price, rating, or amenities that align with their preferences.
-Present the explanations as a numbered list matching the order above.
+Return ONLY a JSON array of exactly {n} strings. Each string is a concise 2-3 sentence explanation
+of why that listing matches the user's needs — mention price, rating, or specific amenities.
+Format: ["Explanation for listing 1.", "Explanation for listing 2.", ...]
+No extra text outside the JSON array.
 """
     try:
-        return model.generate_content(prompt).text
+        raw = model.generate_content(prompt).text.strip()
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+        explanations = json.loads(raw.strip())
+        if isinstance(explanations, list):
+            return [str(e) for e in explanations[:n]]
+        return fallback("Unexpected response format from Gemini.")
     except Exception as e:
-        return f"Gemini error: {e}"
+        return fallback(f"Gemini error: {e}")
