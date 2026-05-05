@@ -49,13 +49,10 @@ def render_recommendations(gemini_key: str) -> None:
     explanations: list[str] = st.session_state.get("explanations") or []
 
     score_col = "hybrid_time_score"
-    score_min = float(results[score_col].min())
-    score_max = float(results[score_col].max())
-    score_range = score_max - score_min if score_max > score_min else 1.0
 
     for rank, (_, row) in enumerate(results.iterrows(), start=1):
         score = float(row[score_col])
-        bar_val = (score - score_min) / score_range
+        score_pct = max(0.0, min(1.0, score)) * 100
         rating = row["review_scores_rating"]
         rating_str = f"{rating:.1f}/5" if pd.notna(rating) else "N/A"
         amenities_preview = str(row.get("amenities_clean", ""))
@@ -77,10 +74,38 @@ def render_recommendations(gemini_key: str) -> None:
         col3.metric("Listing ID", int(row["id"]))
         with col4:
             st.markdown(
-                f'<p class="score-label">Match score: {score:.4f}</p>',
+                f"""
+                <div style="padding: 4px 0 8px 0;">
+                  <div style="font-size:0.7rem; color:#888; margin-bottom:14px;">Match score</div>
+                  <div style="position:relative; height:6px; background:#e9ecef; border-radius:3px; margin-bottom:6px;">
+                    <div style="
+                      position:absolute;
+                      left:calc({score_pct:.2f}% - 6px);
+                      top:-13px;
+                      width:0; height:0;
+                      border-left:6px solid transparent;
+                      border-right:6px solid transparent;
+                      border-top:10px solid #FF5A5F;">
+                    </div>
+                    <div style="
+                      position:absolute;
+                      left:calc({score_pct:.2f}% - 16px);
+                      top:-28px;
+                      font-size:0.72rem;
+                      font-weight:600;
+                      color:#FF5A5F;
+                      width:32px;
+                      text-align:center;">
+                      {score:.3f}
+                    </div>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; font-size:0.65rem; color:#bbb;">
+                    <span>0</span><span>1</span>
+                  </div>
+                </div>
+                """,
                 unsafe_allow_html=True,
             )
-            st.progress(bar_val)
 
         if rank - 1 < len(explanations):
             st.markdown(
