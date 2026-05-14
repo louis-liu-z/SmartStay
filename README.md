@@ -12,13 +12,13 @@ A Streamlit web app that recommends California Airbnb listings using a hybrid re
 
 ## Recommendation Models
 
-| Model | Description |
-|---|---|
-| Baseline (Popularity) | Ranks by Bayesian-smoothed review score |
-| Content-Based | Cosine similarity between user preferences and listing features |
-| Collaborative Filtering | Item-item similarity via k-nearest neighbors |
-| Hybrid (Static) | Weighted blend of content + collaborative + popularity |
-| Hybrid (Time-Based) | Hybrid + recency signal from reviews per month |
+| Model                   | Description                                                     |
+| ----------------------- | --------------------------------------------------------------- |
+| Baseline (Popularity)   | Ranks by Bayesian-smoothed review score                         |
+| Content-Based           | Cosine similarity between user preferences and listing features |
+| Collaborative Filtering | Item-item similarity via k-nearest neighbors                    |
+| Hybrid (Static)         | Weighted blend of content + collaborative + popularity          |
+| Hybrid (Time-Based)     | Hybrid + recency signal from reviews per month                  |
 
 ## Project Structure
 
@@ -41,12 +41,14 @@ SmartStay/
 ## Setup
 
 1. **Clone the repo**
+
    ```bash
    git clone https://github.com/louis-liu-z/SmartStay.git
    cd SmartStay
    ```
 
-2. **Install dependencies**
+2. **Create Python Environment & Install dependencies**
+
    ```bash
    pip install -r requirements.txt
    ```
@@ -64,7 +66,7 @@ SmartStay/
 
 1. Set your preferences in the sidebar (city, budget, room type, amenities, etc.)
 2. Click **Find Stays** to get recommendations
-3. Optionally enter a Google API key under *AI Explanations* to generate Gemini summaries
+3. Optionally enter a Google API key under _AI Explanations_ to generate Gemini summaries
 4. Switch to **Compare Models** to benchmark all five recommendation strategies against your filters
 
 ## Dataset

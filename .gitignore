@@ -1,2 +1,9 @@
 /clean_ca_df.csv
+
+#Virtual Environments
+venv/
+.venv/
+env/
+
 __pycache__/
+*.pyc
