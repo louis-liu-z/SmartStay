@@ -1,5 +1,5 @@
 # SmartStay — California Airbnb Recommender
-
+Teaem Members: Louis Liu, Jonathan Lu, Aaron Hung
 A Streamlit web app that recommends California Airbnb listings using a hybrid recommendation system combining content-based filtering, collaborative filtering, popularity scoring, and recency signals.
 
 ## Features
@@ -56,7 +56,7 @@ SmartStay/
 3. **Add the dataset**
 
    Download `clean_ca_df.csv` and place it in the project root. The file is not included in the repo due to its size (167 MB).
-
+clean_ca_df.csv link: https://drive.google.com/file/d/1SBf04IP4yfcO26DSF4ScUks54jud9F3o/view?usp=sharing
 4. **Run the app**
    ```bash
    streamlit run app.py
